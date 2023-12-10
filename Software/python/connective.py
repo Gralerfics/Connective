@@ -1,6 +1,6 @@
 import time
 
-from .gpio_controller import GPIOController
+from gpio_controller import GPIOController
 
 
 class ConnectiveIO:
@@ -20,20 +20,25 @@ class CH446QMatrix:
         time.sleep(2e-6)
     
     def set_clock(self, value):
-        self.connective.gpio.set(self.io.clock, value)
+        self.connective.gpio.set(self.connective.io.clock, value)
     
     def set_reset(self, value):
-        self.connective.gpio.set(self.io.reset, value)
+        self.connective.gpio.set(self.connective.io.reset, value)
     
     def set_data(self, value):
-        self.connective.gpio.set(self.io.data, value)
+        self.connective.gpio.set(self.connective.io.data, value)
     
     def set_stb(self, value):
-        self.connective.gpio.set(self.io.stb_n, self.connective.gpio.LOW if value == self.connective.gpio.HIGH else self.connective.gpio.HIGH)
+        self.connective.gpio.set(self.connective.io.stb_n, self.connective.gpio.LOW if value == self.connective.gpio.HIGH else self.connective.gpio.HIGH)
     
-    def select_chip(self, value):
+    def select_chip(self, chip_addr):
         for i in range(4):
-            self.connective.gpio.set(self.io.addr[i], int(value & (1 << i) > 0))
+            self.connective.gpio.set(self.connective.io.addr[i], int(chip_addr & (1 << i) > 0))
+    
+    def select_chip_by_name(self, chip_name):
+        # chip_name: 'A0', 'A1', 'B0', 'B1', 'C0', 'C1', 'D0', 'D1', 'E0', 'E1'
+        chip_addr = (ord(chip_name[0]) - 65) << 1 | (ord(chip_name[1]) - 48)
+        self.select_chip(chip_addr)
     
     def reset(self):
         self.set_reset(1)
@@ -49,7 +54,8 @@ class CH446QMatrix:
     
     def select_cross(self, x, y):
         addr = (y << 4) | x
-        for i in range(7, -1, -1):
+        for i in range(6, -1, -1):
+            print(int(addr & (1 << i) > 0))
             self.set_data(int(addr & (1 << i) > 0))
             self.nop()
             self.set_clock(0)
@@ -69,6 +75,8 @@ class CH446QMatrix:
     def set_cross_xy(self, x, y, value):
         self.select_cross(x, y)
         self.set_cross(value)
+    
+    pass
 
 
 class Connective:
