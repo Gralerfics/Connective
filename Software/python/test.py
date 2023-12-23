@@ -26,11 +26,11 @@ class PiGPIOController(GPIOController):
 
 def main():
     connective = Connective(ConnectiveIO(
-        clock = 4,
-        data = 5,
-        reset = 6,
-        stb_n = 7,
-        addr = [0, 1, 2, 3]
+        clock = 'CLOCK',
+        data = 'DATA',
+        reset = 'RESET',
+        stb_n = 'STB_N',
+        addr = ['A0', 'A1', 'A2', 'A3']
     ), PiGPIOController())
     
     connective.matrix.select_chip_by_name('A1')

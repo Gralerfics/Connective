@@ -17,7 +17,7 @@ class CH446QMatrix:
         self.connective = connective
     
     def nop(self):
-        time.sleep(2e-6)
+        time.sleep(2e-5)
     
     def set_clock(self, value):
         self.connective.gpio.set(self.connective.io.clock, value)
@@ -55,7 +55,6 @@ class CH446QMatrix:
     def select_cross(self, x, y):
         addr = (y << 4) | x
         for i in range(6, -1, -1):
-            print(int(addr & (1 << i) > 0))
             self.set_data(int(addr & (1 << i) > 0))
             self.nop()
             self.set_clock(0)

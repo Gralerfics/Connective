@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO
 
-from .connective import Connective, ConnectiveIO
-from .gpio_controller import GPIOController
+from connective import Connective, ConnectiveIO
+from gpio_controller import GPIOController
 
 
 class PiGPIOController(GPIOController):
@@ -33,7 +33,13 @@ def main():
         addr = [0, 0, 0, 0]
     ), PiGPIOController())
     
-    pass
+    # 0 - AC0
+    connective.matrix.select_chip_by_name('A0')
+    connective.matrix.set_cross_xy(8, 0, 1)
+    
+    # AC0 - 19
+    connective.matrix.select_chip_by_name('C0')
+    connective.matrix.set_cross_xy(0, 3, 1)
 
 
 if __name__ == '__main__':
